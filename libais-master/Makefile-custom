@@ -1,0 +1,115 @@
+# -*- makefile -*-
+
+VERSION:=${shell grep __version__ ais/__init__.py | cut -d\' -f 2}
+
+default:
+	@echo
+	@echo "        Welcome to libais ${VERSION}"
+	@echo
+	@echo "Build options:"
+	@echo
+	@echo "  all      - build everything"
+	@echo "  clean    - remove all objects and executables"
+	@echo "  tar      - create a release source tar using VERSION"
+	@echo
+	@echo "  test     - C++, python2, and python3 unittests"
+	@echo "  python2  - build the python2 module"
+	@echo "  python3  - build the python3 module"
+	@echo
+	@echo "Read the README for more information"
+
+all: python2 python3 lib
+
+lib:
+	(cd src/libais; make -f Makefile-custom all)
+
+DIST:=libais-${VERSION}
+TAR:=${DIST}.tar
+tar:
+	rm -f ${TAR}.bz2 ${TAR}
+	rm -rf ${DIST}
+	mkdir ${DIST}
+	cp -rp src test [A-Z]* *.py ${DIST}/
+	tar cf ${TAR} ${DIST}
+	bzip2 -9 ${TAR}
+	rm -rf ${DIST}
+
+
+python2:
+	CFLAGS="-O3 -funroll-loops -fexpensive-optimizations -ffast-math" python2 setup.py build
+
+python3:
+	CFLAGS="-std=c++11 -O0 -g -UNDEBUG" python3 setup.py build
+
+clean:
+	(cd ais && make -f Makefile-custom clean)
+	(cd src && make -f Makefile-custom clean)
+	(cd test && make -f Makefile-custom clean)
+	rm -rf build
+	rm -f _ais.so
+	rm -rf */__pycache__
+	rm -rf *.egg-info
+
+real-clean: clean
+	rm -f MANIFEST
+	rm -rf build dist
+	find . -name .DS_Store | xargs rm -f
+	rm -f test/typeexamples.gpsdecode.json
+	find . -name \*.o | xargs rm -f
+	find . -name \*.a | xargs rm -f
+	find . -name \*.la | xargs rm -f
+	find . -name \*.so | xargs rm -f
+	echo "cmake files:"
+	rm -rf CMakeCache.txt
+	rm -f Makefile
+	find src -name Makefile | xargs rm -f
+	find . -name cmake_install.cmake | xargs rm -rf
+	find . -name CMakeFiles | xargs rm -rf
+
+# This is more aggressive than the GNU idea of mainter-clean.
+maintainer-clean: real-clean
+	rm -f aclocal.m4
+	rm -rf autom4te.cache
+	rm -f config.{guess,log,status,sub}
+	rm -f configure
+	rm -f depcomp
+	rm -rf inst
+	rm -f install-sh
+	rm -f libtool
+	rm -f ltmain.sh
+	rm -f m4/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4
+	rm -f missing
+	find . -name .deps | xargs rm -rf
+	find . -name .libs | xargs rm -rf
+
+.PHONY: test
+test:
+	(cd src; $(MAKE) -f Makefile-custom test)
+
+# Hard coded depends
+src/libais/ais.o: src/libais/ais.h
+src/libais/ais123.o: src/libais/ais.h
+src/libais/ais4_11.o: src/libais/ais.h
+src/libais/ais5.o: src/libais/ais.h
+src/libais/ais6.o: src/libais/ais.h
+src/libais/ais7_13.o: src/libais/ais.h
+src/libais/ais8_1_22.o: src/libais/ais.h
+src/libais/ais8_1_26.o: src/libais/ais.h
+src/libais/ais9.o: src/libais/ais.h
+src/libais/ais10.o: src/libais/ais.h
+src/libais/ais12.o: src/libais/ais.h
+src/libais/ais14.o: src/libais/ais.h
+src/libais/ais15.o: src/libais/ais.h
+src/libais/ais16.o: src/libais/ais.h
+src/libais/ais17.o: src/libais/ais.h
+src/libais/ais18.o: src/libais/ais.h
+src/libais/ais19.o: src/libais/ais.h
+src/libais/ais20.o: src/libais/ais.h
+src/libais/ais21.o: src/libais/ais.h
+src/libais/ais22.o: src/libais/ais.h
+src/libais/ais23.o: src/libais/ais.h
+src/libais/ais24.o: src/libais/ais.h
+src/libais/ais25.o: src/libais/ais.h
+src/libais/ais26.o: src/libais/ais.h
+src/libais/ais27.o: src/libais/ais.h
+src/libais/ais_py.o: src/libais/ais.h

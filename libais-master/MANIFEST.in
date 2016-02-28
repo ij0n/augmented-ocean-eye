@@ -1,0 +1,15 @@
+include AUTHOR.txt
+include Changelog.md
+include CMakeLists.txt
+include LICENSE
+include Makefile-custom
+include Makefile.am
+include MANIFEST.in
+include README.rst
+include setup.py
+
+recursive-include bin *
+recursive-include docs *.txt *.org Makefile *.csv
+recursive-include src *.cpp *.cc *.h Makefile-custom
+recursive-include test *.py Makefile-custom
+recursive-include utils *
